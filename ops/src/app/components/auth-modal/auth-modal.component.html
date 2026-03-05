@@ -1,0 +1,53 @@
+<div class="modal-backdrop" (click)="onBackdropClick($event)">
+    <div class="modal">
+
+        <button class="modal-close" (click)="close.emit()">✕</button>
+
+        <div class="modal-header">
+            <h2 class="modal-title">
+                {{ mode() === 'login' ? 'Bem-vindo de volta' : 'Criar conta' }}
+            </h2>
+            <p class="modal-subtitle">
+                {{ mode() === 'login' ? 'Faz login para continuares' : 'Junta-te a nós hoje' }}
+            </p>
+        </div>
+
+        <div class="modal-tabs">
+            <button [class.active]="mode() === 'login'" (click)="setMode('login')">Login</button>
+            <button [class.active]="mode() === 'register'" (click)="setMode('register')">Registar</button>
+            <div class="tab-indicator" [class.right]="mode() === 'register'"></div>
+        </div>
+
+        <div class="modal-form">
+            <div class="field">
+                <label>Email</label>
+                <input type="email" [(ngModel)]="email" placeholder="o.teu@email.com" [disabled]="loading()" />
+            </div>
+
+            <div class="field">
+                <label>Password</label>
+                <input type="password" [(ngModel)]="password" placeholder="••••••••" [disabled]="loading()" />
+            </div>
+
+            @if (mode() === 'register') {
+            <div class="field">
+                <label>Confirmar Password</label>
+                <input type="password" [(ngModel)]="confirmPassword" placeholder="••••••••" [disabled]="loading()" />
+            </div>
+            }
+
+            @if (errorMsg()) {
+            <div class="alert alert-error">{{ errorMsg() }}</div>
+            }
+            @if (successMsg()) {
+            <div class="alert alert-success">{{ successMsg() }}</div>
+            }
+
+            <button class="btn-submit" (click)="submit()" [disabled]="loading()">
+                @if (loading()) { <span class="spinner"></span> }
+                @else { {{ mode() === 'login' ? 'Entrar' : 'Criar conta' }} }
+            </button>
+        </div>
+
+    </div>
+</div>
