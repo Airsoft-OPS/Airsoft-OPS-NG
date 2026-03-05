@@ -23,21 +23,22 @@
 
         <div class="hero-actions">
             @if (supabase.currentUser()) {
-            <button class="btn-primary">
+            <a routerLink="/eventos" class="btn-primary">
                 🎯 Criar Evento
-            </button>
-            <button class="btn-secondary">
+            </a>
+            <a routerLink="/eventos" class="btn-secondary">
                 Ver Eventos
-            </button>
+            </a>
             } @else {
-            <button class="btn-primary">
+            <a routerLink="/eventos" class="btn-primary">
                 🎯 Começar agora
-            </button>
-            <button class="btn-secondary">
+            </a>
+            <a routerLink="/eventos" class="btn-secondary">
                 Ver Eventos
-            </button>
+            </a>
             }
         </div>
+
 
         <div class="hero-stats">
             <div class="stat">

@@ -1,0 +1,118 @@
+<main class="eventos-page">
+
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-grid"></div>
+
+    <div class="page-header">
+        <div class="header-text">
+            <h1 class="page-title">Eventos <span class="accent">Ativos</span></h1>
+            <p class="page-subtitle">Encontra o teu próximo campo de batalha</p>
+        </div>
+        @if (supabase.currentUser()) {
+        <button class="btn-criar">
+            🎯 Criar Evento
+        </button>
+        }
+    </div>
+
+    <!-- Loading -->
+    @if (loading()) {
+    <div class="loading-state">
+        <div class="spinner-lg"></div>
+        <p>A carregar eventos...</p>
+    </div>
+    }
+
+    <!-- Erro -->
+    @if (erro().length > 0) {
+    <div class="alert alert-error">{{ erro() }}</div>
+    }
+
+    <!-- Lista de eventos -->
+    @if (!loading() && eventos().length === 0) {
+    <div class="empty-state">
+        <span class="empty-icon">🎯</span>
+        <h3>Sem eventos por agora</h3>
+        <p>Sê o primeiro a criar um evento!</p>
+    </div>
+    }
+
+    <div class="eventos-grid">
+        @for (evento of eventos(); track evento.id) {
+        <div class="evento-card" [class.privado]="evento.privado">
+
+            <div class="card-header">
+                <div class="card-badges">
+                    <span class="badge" [class]="getTierClass(evento.tier_minimo)">
+                        {{ getTierLabel(evento.tier_minimo) }}
+                    </span>
+                    @if (evento.privado) {
+                    <span class="badge badge-privado">🔒 Privado</span>
+                    }
+                </div>
+                <span class="card-data">{{ formatarData(evento.data_evento) }}</span>
+            </div>
+
+            <h3 class="card-titulo">{{ evento.titulo }}</h3>
+            <p class="card-descricao">{{ evento.descricao }}</p>
+
+            <div class="card-info">
+                <span class="info-item">
+                    📍 {{ evento.localizacao }}
+                </span>
+                <span class="info-item">
+                    👥 {{ evento.vagas }} vagas
+                </span>
+            </div>
+
+            <div class="card-footer">
+                @if (!supabase.currentUser()) {
+                <button class="btn-card btn-locked" disabled>
+                    🔑 Login para inscrever
+                </button>
+                } @else if (evento.privado) {
+                <button class="btn-card btn-primary" (click)="abrirEvento(evento)">
+                    🔒 Aceder com código
+                </button>
+                } @else if (!podeInscrever(evento)) {
+                <button class="btn-card btn-locked" disabled>
+                    🚫 Requer {{ getTierLabel(evento.tier_minimo) }}
+                </button>
+                } @else {
+                <button class="btn-card btn-primary">
+                    ✅ Inscrever
+                </button>
+                }
+            </div>
+
+        </div>
+        }
+    </div>
+
+</main>
+
+<!-- Modal código acesso -->
+<!-- @if (eventoSelecionado()) {
+<div class="modal-backdrop" (click)="fecharModal($event)">
+    <div class="modal">
+        <h2 class="modal-title">🔒 Evento Privado</h2>
+        <p class="modal-subtitle">
+            Introduz o código de acesso para <strong>{{ eventoSelecionado()!.titulo }}</strong>
+        </p>
+
+        <div class="field">
+            <label>Código de acesso</label>
+            <input type="text" [(ngModel)]="codigoInput" placeholder="Ex: AIRSOFT-X7K2"
+                [ngModelOptions]="{standalone: true}" />
+        </div>
+
+        @if (codigoErro().length > 0) {
+        <div class="alert alert-error">{{ codigoErro() }}</div>
+        }
+
+        <button class="btn-submit" (click)="verificarCodigo()">
+            Entrar no Evento
+        </button>
+    </div>
+</div>
+} -->

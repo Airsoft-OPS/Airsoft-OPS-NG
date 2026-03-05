@@ -19,6 +19,7 @@ export class AuthModalComponent {
   email = '';
   password = '';
   confirmPassword = '';
+  username = '';
   loading = signal(false);
   errorMsg = signal('');
   successMsg = signal('');
@@ -31,9 +32,8 @@ export class AuthModalComponent {
     this.email = '';
     this.password = '';
     this.confirmPassword = '';
-    setTimeout(() => {
-      this.mode.set(m);
-    }, 10);
+    this.username = '';
+    setTimeout(() => { this.mode.set(m); }, 10);
   }
 
   async submit() {
@@ -41,6 +41,16 @@ export class AuthModalComponent {
     this.successMsg.set('');
 
     if (!this.email || !this.password) {
+      this.errorMsg.set('Preenche todos os campos.');
+      return;
+    }
+
+    if (this.mode() === 'register' && !this.username) {
+      this.errorMsg.set('Preenche o teu username.');
+      return;
+    }
+
+    if (this.mode() === 'register' && !this.confirmPassword) {
       this.errorMsg.set('Preenche todos os campos.');
       return;
     }
@@ -56,7 +66,7 @@ export class AuthModalComponent {
         await this.supabase.signIn(this.email, this.password);
         this.close.emit();
       } else {
-        await this.supabase.signUp(this.email, this.password);
+        await this.supabase.signUp(this.email, this.password, this.username);
         this.successMsg.set('Conta criada! Verifica o teu email.');
       }
     } catch (err: any) {

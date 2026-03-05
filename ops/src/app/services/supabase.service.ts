@@ -2,11 +2,20 @@ import { Injectable, signal } from '@angular/core';
 import { createClient, SupabaseClient, User } from '@supabase/supabase-js';
 import { environment } from '../../environments/environment';
 
+export interface Perfil {
+  id: string;
+  email: string;
+  username: string;
+  tier: 'free' | 'pro' | 'pro+' | 'admin';
+  avatar_url: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class SupabaseService {
   private supabase: SupabaseClient;
 
   currentUser = signal<User | null>(null);
+  currentPerfil = signal<Perfil | null>(null);
 
   constructor() {
     this.supabase = createClient(
@@ -14,20 +23,31 @@ export class SupabaseService {
       environment.supabaseKey
     );
 
-    // Carrega sessão atual ao iniciar
     this.supabase.auth.getSession().then(({ data }) => {
       this.currentUser.set(data.session?.user ?? null);
+      if (data.session?.user) {
+        this.carregarPerfil(data.session.user.id);
+      }
     });
 
-    // Escuta mudanças de autenticação
     this.supabase.auth.onAuthStateChange((_, session) => {
       this.currentUser.set(session?.user ?? null);
+      if (session?.user) {
+        this.carregarPerfil(session.user.id);
+      } else {
+        this.currentPerfil.set(null);
+      }
     });
   }
 
-  async signUp(email: string, password: string) {
+  // ── Auth ──────────────────────────────────────────────
+  async signUp(email: string, password: string, username: string) {
     const { data, error } = await this.supabase.auth.signUp({ email, password });
     if (error) throw error;
+
+    if (data.user) {
+      await this.criarPerfil(data.user.id, email, username);
+    }
     return data;
   }
 
@@ -40,5 +60,62 @@ export class SupabaseService {
   async signOut() {
     const { error } = await this.supabase.auth.signOut();
     if (error) throw error;
+  }
+
+  // ── Perfil ────────────────────────────────────────────
+  async criarPerfil(id: string, email: string, username: string) {
+    const { error } = await this.supabase.from('perfis').insert({
+      id,
+      email,
+      username,
+      tier: 'free',
+      avatar_url: ''
+    });
+    if (error) throw error;
+  }
+
+  async carregarPerfil(id: string) {
+    const { data, error } = await this.supabase
+      .from('perfis')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (!error && data) {
+      this.currentPerfil.set(data);
+    }
+  }
+
+  // ── Helpers de Tier ───────────────────────────────────
+  isPro(): boolean {
+    const tier = this.currentPerfil()?.tier;
+    return tier === 'pro' || tier === 'pro+' || tier === 'admin';
+  }
+
+  isProPlus(): boolean {
+    const tier = this.currentPerfil()?.tier;
+    return tier === 'pro+' || tier === 'admin';
+  }
+
+  isAdmin(): boolean {
+    return this.currentPerfil()?.tier === 'admin';
+  }
+
+  // ── Eventos ───────────────────────────────────────────
+  async getEventos() {
+    const { data, error } = await this.supabase
+      .from('eventos')
+      .select('*')
+      .order('data_evento', { ascending: true });
+    if (error) throw error;
+    return data;
+  }
+
+  async criarEvento(evento: any) {
+    const { data, error } = await this.supabase
+      .from('eventos')
+      .insert(evento);
+    if (error) throw error;
+    return data;
   }
 }
