@@ -1,10 +1,10 @@
 import { Component, EventEmitter, Output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { SupabaseService } from '../../services/supabase.service';
 import { LucideAngularModule } from 'lucide-angular';
+import { SupabaseService } from '../../services/supabase.service';
 
-type AuthMode = 'login' | 'register';
+type AuthMode = 'login' | 'register' | 'reset';
 
 @Component({
   selector: 'app-auth-modal',
@@ -40,6 +40,23 @@ export class AuthModalComponent {
   async submit() {
     this.errorMsg.set('');
     this.successMsg.set('');
+
+    if (this.mode() === 'reset') {
+      if (!this.email) {
+        this.errorMsg.set('Introduz o teu email.');
+        return;
+      }
+      this.loading.set(true);
+      try {
+        await this.supabase.resetPassword(this.email);
+        this.successMsg.set('Email enviado! Verifica a tua caixa de correio.');
+      } catch (err: any) {
+        this.errorMsg.set(err.message || 'Ocorreu um erro. Tenta novamente.');
+      } finally {
+        this.loading.set(false);
+      }
+      return;
+    }
 
     if (!this.email || !this.password) {
       this.errorMsg.set('Preenche todos os campos.');

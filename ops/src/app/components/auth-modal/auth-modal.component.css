@@ -249,3 +249,21 @@
 .spin {
     animation: spin 0.8s linear infinite;
 }
+
+.btn-forgot {
+    background: transparent;
+    border: none;
+    color: var(--text-3);
+    font-size: 0.8rem;
+    cursor: pointer;
+    text-align: left;
+    padding: 0;
+    transition: color 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.btn-forgot:hover {
+    color: rgb(34, 197, 94);
+}

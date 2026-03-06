@@ -42,12 +42,14 @@ export class SupabaseService {
 
   // ── Auth ──────────────────────────────────────────────
   async signUp(email: string, password: string, username: string) {
-    const { data, error } = await this.supabase.auth.signUp({ email, password });
+    const { data, error } = await this.supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { username }
+      }
+    });
     if (error) throw error;
-
-    if (data.user) {
-      await this.criarPerfil(data.user.id, email, username);
-    }
     return data;
   }
 
@@ -84,6 +86,20 @@ export class SupabaseService {
     if (!error && data) {
       this.currentPerfil.set(data);
     }
+  }
+
+  async resetPassword(email: string) {
+    const { error } = await this.supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: 'http://localhost:4200/reset-password'
+    });
+    if (error) throw error;
+  }
+
+  async updatePassword(newPassword: string) {
+    const { error } = await this.supabase.auth.updateUser({
+      password: newPassword
+    });
+    if (error) throw error;
   }
 
   // ── Helpers de Tier ───────────────────────────────────
