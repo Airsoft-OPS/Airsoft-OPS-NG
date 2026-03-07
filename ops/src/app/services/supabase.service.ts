@@ -5,7 +5,8 @@ import { environment } from '../../environments/environment';
 export interface Perfil {
   id: string;
   email: string;
-  username: string;
+  primeiro_nome: string;
+  ultimo_nome: string;
   tier: 'free' | 'pro' | 'pro+' | 'admin';
   avatar_url: string;
 }
@@ -41,19 +42,18 @@ export class SupabaseService {
   }
 
   // ── Auth ──────────────────────────────────────────────
-  async signUp(email: string, password: string, username: string) {
+  async signUp(email: string, password: string, primeiro_nome: string, ultimo_nome: string) {
     const { data, error } = await this.supabase.auth.signUp({
       email,
       password,
       options: {
-        data: { username }
+        data: { primeiro_nome, ultimo_nome }
       }
     });
     if (error) throw error;
 
-    // Login automático após registo
     await this.signIn(email, password);
-
+    
     return data;
   }
 

@@ -21,7 +21,8 @@ export class AuthModalComponent {
   email = '';
   password = '';
   confirmPassword = '';
-  username = '';
+  primeiro_nome = '';
+  ultimo_nome = '';
   loading = signal(false);
   errorMsg = signal('');
   successMsg = signal('');
@@ -34,7 +35,8 @@ export class AuthModalComponent {
     this.email = '';
     this.password = '';
     this.confirmPassword = '';
-    this.username = '';
+    this.primeiro_nome = '';
+    this.ultimo_nome = '';
     setTimeout(() => { this.mode.set(m); }, 10);
   }
 
@@ -64,8 +66,13 @@ export class AuthModalComponent {
       return;
     }
 
-    if (this.mode() === 'register' && !this.username) {
-      this.errorMsg.set('Preenche o teu username.');
+    if (this.mode() === 'register' && !this.primeiro_nome) {
+      this.errorMsg.set('Preenche o teu primeiro nome.');
+      return;
+    }
+
+    if (this.mode() === 'register' && !this.ultimo_nome) {
+      this.errorMsg.set('Preenche o teu último nome.');
       return;
     }
 
@@ -84,16 +91,16 @@ export class AuthModalComponent {
       if (this.mode() === 'login') {
         await this.supabase.signIn(this.email, this.password);
         await new Promise(resolve => setTimeout(resolve, 500));
-        const username = this.supabase.currentPerfil()?.username || this.email.split('@')[0];
-        this.toast.show(`Bem-vindo de volta, ${username} !`);
+        const nome = this.supabase.currentPerfil()?.primeiro_nome || this.email.split('@')[0];
+        this.toast.show(`Bem-vindo de volta, ${nome} !`);
         this.close.emit();
       } else {
-        await this.supabase.signUp(this.email, this.password, this.username);
-        await new Promise(resolve => setTimeout(resolve, 500));
-        const username = this.supabase.currentPerfil()?.username || this.email.split('@')[0];
-        this.toast.show(`Bem-vindo, ${username}! Conta criada com sucesso.`);
+        await this.supabase.signUp(this.email, this.password, this.primeiro_nome, this.ultimo_nome);
+        const nome = this.supabase.currentPerfil()?.primeiro_nome || this.email.split('@')[0];
+        this.toast.show(`Bem-vindo, ${nome}! Conta criada com sucesso.`);
         this.close.emit();
       }
+
     } catch (err: any) {
       this.errorMsg.set(err.message || 'Ocorreu um erro. Tenta novamente.');
     } finally {

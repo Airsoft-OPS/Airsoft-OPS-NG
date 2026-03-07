@@ -172,8 +172,8 @@ export class EventDetailsComponent implements OnInit {
       const review = {
         event_id: e.id,
         user_id: user.id,
-        username: profile?.username || user.email?.split('@')[0] || 'Anónimo',
-        avatar_initial: (profile?.username || user.email || 'A')[0].toUpperCase(),
+        nome: profile?.primeiro_nome || user.email?.split('@')[0] || 'Anónimo',
+        avatar_initial: (profile?.primeiro_nome || user.email || 'A')[0].toUpperCase(),
         rating: this.newRating(),
         comment: this.newComment.trim(),
       };
