@@ -134,4 +134,8 @@ export class SupabaseService {
     if (error) throw error;
     return data;
   }
+
+  async getSession() {
+    return await this.supabase.auth.getSession();
+  }
 }
