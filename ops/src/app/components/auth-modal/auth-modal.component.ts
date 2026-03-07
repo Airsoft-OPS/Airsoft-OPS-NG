@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
 import { SupabaseService } from '../../services/supabase.service';
+import { ToastService } from '../../services/toast.service';
 
 type AuthMode = 'login' | 'register' | 'reset';
 
@@ -25,7 +26,7 @@ export class AuthModalComponent {
   errorMsg = signal('');
   successMsg = signal('');
 
-  constructor(private supabase: SupabaseService) { }
+  constructor(private supabase: SupabaseService,  private toast: ToastService) { }
 
   setMode(m: AuthMode) {
     this.errorMsg.set('');
@@ -82,9 +83,12 @@ export class AuthModalComponent {
     try {
       if (this.mode() === 'login') {
         await this.supabase.signIn(this.email, this.password);
+        const username = this.supabase.currentPerfil()?.username || this.email.split('@')[0];
+        this.toast.show(`Bem-vindo de volta, ${username} !`);
         this.close.emit();
       } else {
         await this.supabase.signUp(this.email, this.password, this.username);
+        this.toast.show('Bem-vindo! Conta criada com sucesso.');
         this.close.emit();
       }
     } catch (err: any) {
