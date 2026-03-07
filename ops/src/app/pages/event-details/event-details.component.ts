@@ -33,13 +33,13 @@ export interface EventDetail {
 }
 
 @Component({
-  selector: 'app-evento-detalhe',
+  selector: 'app-event-detail',
   standalone: true,
   imports: [CommonModule, FormsModule, LucideAngularModule, RouterModule],
-  templateUrl: './evento-detalhe.component.html',
-  styleUrls: ['./evento-detalhe.component.css']
+  templateUrl: './event-details.component.html',
+  styleUrls: ['./event-details.component.css']
 })
-export class EventoDetalheComponent implements OnInit {
+export class EventDetailsComponent implements OnInit {
   event = signal<EventDetail | null>(null);
   reviews = signal<Review[]>([]);
   loading = signal(true);
@@ -79,7 +79,7 @@ export class EventoDetalheComponent implements OnInit {
 
   async ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
-    if (!id) { this.router.navigate(['/eventos']); return; }
+    if (!id) { this.router.navigate(['/events']); return; }
 
     try {
       await this.loadEvent(id);
@@ -241,6 +241,6 @@ export class EventoDetalheComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['/eventos']);
+    this.router.navigate(['/events']);
   }
 }
