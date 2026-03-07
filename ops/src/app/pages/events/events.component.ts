@@ -1,7 +1,8 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { SupabaseService } from '../../services/supabase.service';
-import { FormsModule } from '@angular/forms'; 
+import { FormsModule } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
 
 export interface Evento {
@@ -18,13 +19,13 @@ export interface Evento {
 }
 
 @Component({
-  selector: 'app-eventos',
+  selector: 'app-events',
   standalone: true,
-  imports: [CommonModule, FormsModule, LucideAngularModule],
-  templateUrl: './eventos.component.html',
-  styleUrls: ['./eventos.component.css']
+  imports: [CommonModule, FormsModule, LucideAngularModule, RouterModule],
+  templateUrl: './events.component.html',
+  styleUrls: ['./events.component.css'],
 })
-export class EventosComponent implements OnInit {
+export class EventsComponent implements OnInit {
   eventos = signal<Evento[]>([]);
   loading = signal(true);
   erro = signal('');
@@ -34,7 +35,7 @@ export class EventosComponent implements OnInit {
   codigoInput = '';
   codigoErro = signal('');
 
-  constructor(public supabase: SupabaseService) { }
+  constructor(public supabase: SupabaseService) {}
 
   async ngOnInit() {
     try {
@@ -90,7 +91,11 @@ export class EventosComponent implements OnInit {
 
   formatarData(data: string): string {
     return new Date(data).toLocaleDateString('pt-PT', {
-      day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
     });
   }
 }
