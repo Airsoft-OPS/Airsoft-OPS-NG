@@ -22,7 +22,7 @@
       @if (supabase.currentUser() && supabase.currentPerfil()) {
       <div class="user-info">
         <div class="user-avatar">
-          {{ supabase.currentPerfil()!.username![0].toUpperCase() }}
+          {{ supabase.currentPerfil()!.primeiro_nome![0].toUpperCase() }}
         </div>
         @if(supabase.currentPerfil()?.avatar_url) {
         <span class="user_avatar">
@@ -31,7 +31,7 @@
         }
         @else {
         <span class="user-email">
-          {{ supabase.currentPerfil()?.username }}
+          {{ supabase.currentPerfil()?.primeiro_nome }} {{ supabase.currentPerfil()?.ultimo_nome }}
         </span>
         }
         <button class="btn-logout" (click)="logout()">Sair</button>

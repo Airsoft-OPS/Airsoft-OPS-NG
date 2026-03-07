@@ -53,10 +53,17 @@
 
             @if (mode() === 'register') {
             <div class="field">
-                <label>Username</label>
+                <label>Primeiro Nome</label>
                 <div class="input-wrap">
                     <lucide-icon name="user-round" [size]="15" class="input-icon"></lucide-icon>
-                    <input type="text" [(ngModel)]="username" placeholder="o_teu_username" [disabled]="loading()" />
+                    <input type="text" [(ngModel)]="primeiro_nome" placeholder="João" [disabled]="loading()" />
+                </div>
+            </div>
+            <div class="field">
+                <label>Último Nome</label>
+                <div class="input-wrap">
+                    <lucide-icon name="user-round" [size]="15" class="input-icon"></lucide-icon>
+                    <input type="text" [(ngModel)]="ultimo_nome" placeholder="Silva" [disabled]="loading()" />
                 </div>
             </div>
             }
