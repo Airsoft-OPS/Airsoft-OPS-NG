@@ -79,7 +79,7 @@ export class EventDetailsComponent implements OnInit {
 
   async ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
-    if (!id) { this.router.navigate(['/eventos']); return; }
+    if (!id) { this.router.navigate(['/events']); return; }
 
     try {
       await this.loadEvent(id);
@@ -241,6 +241,6 @@ export class EventDetailsComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['/eventos']);
+    this.router.navigate(['/events']);
   }
 }
